@@ -1,8 +1,8 @@
 syntax = "proto3";
 
 message Epicenter {
-    int32 lat = 1; // 固定小数点数
-    int32 lon = 2; // 固定小数点数
+    int32 lat_x10 = 1;
+    int32 lon_x10 = 2;
 }
 
 message CodeArray {
@@ -10,14 +10,21 @@ message CodeArray {
 }
 
 message QuakePrefectureData {
-    Epicenter epicenter = 1;
-    CodeArray one = 2;
-    CodeArray two = 3;
-    CodeArray three = 4;
-    CodeArray four = 5;
-    CodeArray five_minus = 6;
-    CodeArray five_plus = 7;
-    CodeArray six_minus = 8;
-    CodeArray six_plus = 9;
-    CodeArray seven = 10;
+    uint32 rendering_width = 1;
+    uint64 quaked_unixtime = 2;
+
+    optional Epicenter epicenter = 3;
+    optional uint32 magnitude_x10 = 4;
+
+    string code_table_difinition = 5;
+
+    CodeArray one = 6;
+    CodeArray two = 7;
+    CodeArray three = 8;
+    CodeArray four = 9;
+    CodeArray five_minus = 10;
+    CodeArray five_plus = 11;
+    CodeArray six_minus = 12;
+    CodeArray six_plus = 13;
+    CodeArray seven = 14;
 }
