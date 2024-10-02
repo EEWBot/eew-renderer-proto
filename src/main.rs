@@ -33,34 +33,32 @@ struct QuakePrefData {
     seven: Option<Vec<u32>>,
 }
 
-
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let target = include_str!("20240808075502_0_VXSE53_010000.json");
     let qpd_json: QuakePrefData = serde_json::from_str(target)?;
     println!("hoge");
-    
+
     let quake_prefecture_data = QuakePrefectureData {
         rendering_width: qpd_json.rendering_width,
         quaked_unixtime: qpd_json.quaked_unixtime,
-        magnitude_x10: Some(qpd_json.magnitude_x10.unwrap()),
+        magnitude_x10: qpd_json.magnitude_x10,
         code_table_definition: qpd_json.code_table_difinition,
-        epicenter: Some(Epicenter {
-            lat_x10: qpd_json.epicenter.as_ref().unwrap().lat_x10,
-            lon_x10: qpd_json.epicenter.as_ref().unwrap().lon_x10,
+        epicenter: qpd_json.epicenter.map(|v| Epicenter {
+            lat_x10: v.lat_x10,
+            lon_x10: v.lon_x10,
         }),
-        one: Some(CodeArray { codes: qpd_json.one.unwrap() }),
-        two: Some(CodeArray { codes: qpd_json.two.unwrap() }),
-        three: Some(CodeArray { codes: qpd_json.three.unwrap() }),
-        four: Some(CodeArray { codes: qpd_json.four.unwrap() }),
-        five_minus: Some(CodeArray { codes: qpd_json.five_minus.unwrap() }),
-        five_plus: Some(CodeArray { codes: qpd_json.five_plus.unwrap() }),
-        six_minus: Some(CodeArray { codes: qpd_json.six_minus.unwrap() }),
-        six_plus: Some(CodeArray { codes: qpd_json.six_plus.unwrap() }),
-        seven: Some(CodeArray { codes: qpd_json.seven.unwrap() }),
+        one: qpd_json.one.map(|v| CodeArray { codes: v }),
+        two: qpd_json.two.map(|v| CodeArray { codes: v }),
+        three: qpd_json.three.map(|v| CodeArray { codes: v }),
+        four: qpd_json.four.map(|v| CodeArray { codes: v }),
+        five_minus: qpd_json.five_minus.map(|v| CodeArray { codes: v }),
+        five_plus: qpd_json.five_plus.map(|v| CodeArray { codes: v }),
+        six_minus: qpd_json.six_minus.map(|v| CodeArray { codes: v }),
+        six_plus: qpd_json.six_plus.map(|v| CodeArray { codes: v }),
+        seven: qpd_json.seven.map(|v| CodeArray { codes: v }),
     };
     println!("hoge");
-    
+
     let buf: Vec<u8> = quake_prefecture_data.encode_to_vec();
     wr_b65(&buf)
 }
