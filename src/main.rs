@@ -9,10 +9,16 @@ use serde::Deserialize;
 use serde_json;
 
 #[derive(Deserialize)]
+struct QuakePrefDataEpicenter {
+    lat_x10: i32,
+    lon_x10: i32,
+}
+
+#[derive(Deserialize)]
 struct QuakePrefData {
     rendering_width: u32,
     quaked_unixtime: u64,
-    epicenter: Option<(i32, i32)>, // (lat_x10, lon_x10)
+    epicenter: Option<QuakePrefDataEpicenter>,
     magnitude_x10: Option<u32>,
     code_table_difinition: String,
 
@@ -40,8 +46,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         magnitude_x10: Some(qpd_json.magnitude_x10.unwrap()),
         code_table_definition: qpd_json.code_table_difinition,
         epicenter: Some(Epicenter {
-            lat_x10: qpd_json.epicenter.unwrap().0,
-            lon_x10: qpd_json.epicenter.unwrap().1,
+            lat_x10: qpd_json.epicenter.as_ref().unwrap().lat_x10,
+            lon_x10: qpd_json.epicenter.as_ref().unwrap().lon_x10,
         }),
         one: Some(CodeArray { codes: qpd_json.one.unwrap() }),
         two: Some(CodeArray { codes: qpd_json.two.unwrap() }),
