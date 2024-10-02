@@ -17,7 +17,7 @@ message QuakePrefectureData {
     optional Epicenter epicenter = 3;
     optional uint32 magnitude_x10 = 4;
 
-    string code_table_difinition = 5;
+    string code_table_definition = 5;
 
     CodeArray one = 6;
     CodeArray two = 7;
