@@ -2,6 +2,9 @@ pub mod quake_prefecture {
     include!(concat!(env!("OUT_DIR"), "/quake_prefecture.rs"));
 }
 
+use std::fs::File;
+use std::io::Write;
+
 use prost::Message;
 use quake_prefecture::{CodeArray, Epicenter, QuakePrefectureData};
 
@@ -36,7 +39,7 @@ struct QuakePrefData {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let target = include_str!("20240808075502_0_VXSE53_010000.json");
     let qpd_json: QuakePrefData = serde_json::from_str(target)?;
-    println!("hoge");
+    // println!("hoge");
 
     let quake_prefecture_data = QuakePrefectureData {
         rendering_width: qpd_json.rendering_width,
@@ -57,14 +60,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         six_plus: qpd_json.six_plus.map(|v| CodeArray { codes: v }),
         seven: qpd_json.seven.map(|v| CodeArray { codes: v }),
     };
-    println!("hoge");
+    // println!("hoge");
 
     let buf: Vec<u8> = quake_prefecture_data.encode_to_vec();
-    wr_b65(&buf)
+    let zstd_buf = zstd::encode_all(&buf[..], 0)?;
+    wr_b65(&zstd_buf)
 }
 
 fn wr_b65(buf: &[u8]) -> Result<(), Box<dyn std::error::Error>> {
-    let encoded = base65536::encode(buf, None);
-    println!("{}", encoded);
+    let mut file = File::create("qpd.txt")?;
+    file.write_all(base65536::encode(buf, None).as_bytes())?;
     Ok(())
 }
