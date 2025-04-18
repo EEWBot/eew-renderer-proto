@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package quake_prefecture;
+package quake_prefecture_v0;
 
 message Epicenter {
     int32 lat_x10 = 1;
