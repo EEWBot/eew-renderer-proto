@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package quake_prefecture;
+
+message Epicenter {
+    int32 lat_x10 = 1;
+    int32 lon_x10 = 2;
+}
+
+message CodeArray {
+    repeated uint32 codes = 1;
+}
+
+message QuakePrefectureData {
+    optional Epicenter epicenter = 1;
+
+    CodeArray one = 2;
+    CodeArray two = 3;
+    CodeArray three = 4;
+    CodeArray four = 5;
+    CodeArray five_minus = 6;
+    CodeArray five_plus = 7;
+    CodeArray six_minus = 8;
+    CodeArray six_plus = 9;
+    CodeArray seven = 10;
+}
