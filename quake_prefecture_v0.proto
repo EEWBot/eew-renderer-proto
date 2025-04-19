@@ -12,16 +12,16 @@ message CodeArray {
 }
 
 message QuakePrefectureData {
-    optional Epicenter epicenter = 1;
-    uint64 time;
+    uint64 time = 1;
+    optional Epicenter epicenter = 2;
 
-    CodeArray one = 2;
-    CodeArray two = 3;
-    CodeArray three = 4;
-    CodeArray four = 5;
-    CodeArray five_minus = 6;
-    CodeArray five_plus = 7;
-    CodeArray six_minus = 8;
-    CodeArray six_plus = 9;
-    CodeArray seven = 10;
+    CodeArray one = 3;
+    CodeArray two = 4;
+    CodeArray three = 5;
+    CodeArray four = 6;
+    CodeArray five_minus = 7;
+    CodeArray five_plus = 8;
+    CodeArray six_minus = 9;
+    CodeArray six_plus = 10;
+    CodeArray seven = 11;
 }
