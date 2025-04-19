@@ -13,6 +13,7 @@ message CodeArray {
 
 message QuakePrefectureData {
     optional Epicenter epicenter = 1;
+    uint64 time;
 
     CodeArray one = 2;
     CodeArray two = 3;
