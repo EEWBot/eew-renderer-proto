@@ -11,7 +11,7 @@ message CodeArray {
     repeated uint32 codes = 1;
 }
 
-message QuakePrefectureData {
+message TsunamiForecastData {
     uint64 time = 1;
     optional Epicenter epicenter = 2;
 
