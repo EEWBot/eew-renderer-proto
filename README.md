@@ -21,4 +21,5 @@
 
 |Versioned Type ID|Protobuf File|
 |:--|:--|
-|`0`|`tsunami_v0.proto`|
+|`0`|`quake_prefecture_v0.proto`|
+|`1`|`tsunami_v0.proto`|
