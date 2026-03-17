@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package net.eewbot.models;
+
+message CodeArray {
+    repeated uint32 codes = 1;
+}

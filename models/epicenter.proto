@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package net.eewbot.models;
+
+message Epicenter {
+    int32 lat_x10 = 1;
+    int32 lon_x10 = 2;
+}

@@ -1,15 +1,9 @@
 syntax = "proto3";
 
-package tsunami_v0;
+package net.eewbot;
 
-message Epicenter {
-    int32 lat_x10 = 1;
-    int32 lon_x10 = 2;
-}
-
-message CodeArray {
-    repeated uint32 codes = 1;
-}
+import "models/code_array.proto"
+import "models/epicenter.proto"
 
 message TsunamiForecastData {
     uint64 time = 1;
