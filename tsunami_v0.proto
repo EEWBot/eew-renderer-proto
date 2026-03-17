@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package net.eewbot;
 
-import "models/code_array.proto"
-import "models/epicenter.proto"
+import "models/code_array.proto";
+import "models/epicenter.proto";
 
 message TsunamiForecastData {
     uint64 time = 1;
