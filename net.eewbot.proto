@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package net.eewbot;
+
+message CodeArray {
+    repeated uint32 codes = 1;
+}
+
+message Epicenter {
+    int32 lat_x10 = 1;
+    int32 lon_x10 = 2;
+}
+
+message QuakePrefectureV0 {
+    uint64 time = 1;
+    optional Epicenter epicenter = 2;
+
+    CodeArray one = 3;
+    CodeArray two = 4;
+    CodeArray three = 5;
+    CodeArray four = 6;
+    CodeArray five_minus = 7;
+    CodeArray five_plus = 8;
+    CodeArray six_minus = 9;
+    CodeArray six_plus = 10;
+    CodeArray seven = 11;
+}
+
+message TsunamiForecastV0 {
+    uint64 time = 1;
+    optional Epicenter epicenter = 2;
+
+    CodeArray forecast = 3;
+    CodeArray advisory = 4;
+    CodeArray warning = 5;
+    CodeArray major_warning = 6;
+}
