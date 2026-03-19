@@ -7,10 +7,10 @@ import "models/epicenter.proto";
 
 message TsunamiForecastData {
     uint64 time = 1;
-    optional Epicenter epicenter = 2;
+    optional net.eewbot.models.Epicenter epicenter = 2;
 
-    CodeArray forecast = 3;
-    CodeArray advisory = 4;
-    CodeArray warning = 5;
-    CodeArray major_warning = 6;
+    net.eewbot.models.CodeArray forecast = 3;
+    net.eewbot.models.CodeArray advisory = 4;
+    net.eewbot.models.CodeArray warning = 5;
+    net.eewbot.models.CodeArray major_warning = 6;
 }
