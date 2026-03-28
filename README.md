@@ -19,7 +19,8 @@
 
 ### Versioned Type ID
 
-|Versioned Type ID|Protobuf File|
+|Versioned Type ID|Protobuf Message|
 |:--|:--|
-|`0`|`quake_prefecture_v0.proto`|
-|`1`|`tsunami_v0.proto`|
+|`0`|`QuakePrefectureV0`|
+|`1`|`TsunamiForecastV0`|
+|`2`|`TsunamiForecastV1`|
