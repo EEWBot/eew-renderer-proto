@@ -28,6 +28,16 @@ message QuakePrefectureV0 {
 
 message TsunamiForecastV0 {
     uint64 time = 1;
+    optional Epicenter epicenter = 2;
+
+    CodeArray forecast = 3;
+    CodeArray advisory = 4;
+    CodeArray warning = 5;
+    CodeArray major_warning = 6;
+}
+
+message TsunamiForecastV1 {
+    uint64 time = 1;
     repeated Epicenter epicenter = 2;
 
     CodeArray forecast = 3;
