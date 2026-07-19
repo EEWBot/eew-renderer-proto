@@ -45,3 +45,10 @@ message TsunamiForecastV1 {
     CodeArray warning = 5;
     CodeArray major_warning = 6;
 }
+
+message QuakeWarningV0 {
+    uint64 time = 1;
+    optional Epicenter epicenter = 2;
+
+    CodeArray warning = 3;
+}
