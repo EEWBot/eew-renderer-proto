@@ -24,3 +24,4 @@
 |`0`|`QuakePrefectureV0`|
 |`1`|`TsunamiForecastV0`|
 |`2`|`TsunamiForecastV1`|
+|`3`|`QuakeWarningV0`|
