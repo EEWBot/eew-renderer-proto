@@ -25,3 +25,4 @@
 |`1`|`TsunamiForecastV0`|
 |`2`|`TsunamiForecastV1`|
 |`3`|`QuakeWarningV0`|
+|`4`|`QuakeStationV0`|

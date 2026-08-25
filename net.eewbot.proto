@@ -52,3 +52,10 @@ message QuakeWarningV0 {
 
     CodeArray warning = 3;
 }
+
+message QuakeStationV0 {
+    uint64 time = 1;
+    optional Epicenter epicenter = 2;
+
+    bytes intensities = 3;
+}
