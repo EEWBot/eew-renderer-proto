@@ -58,4 +58,5 @@ message QuakeStationV0 {
     optional Epicenter epicenter = 2;
 
     bytes intensities = 3;
+    bool has_unknown_stations = 4;
 }
