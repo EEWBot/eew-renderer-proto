@@ -35,10 +35,10 @@
 
 |`mode`|Body|
 |:--|:--|
-|`0`|raw DEFLATE（zlib ヘッダ無し / level 10）|
+|`0`|zstd（dictionary・checksum・content size frame なし）|
 |`1`|シンボル列全体を 1 個の 10 進数とみなしたradix conversion（index 0 が最下位桁）|
 
-依存: `num-bigint` / `num-traits` / `thiserror` / `miniz_oxide`
+依存: `num-bigint` / `num-traits` / `thiserror` / `zstd`
 
 ```rust
 use num_bigint::BigUint;
@@ -47,6 +47,8 @@ use num_traits::Zero;
 pub const MAX_SYMBOL: u8 = 9;
 
 pub const MAX_DECOMPRESSED: usize = 1 << 16;
+
+pub const MAX_WINDOW_LOG: u32 = 16;
 
 #[derive(thiserror::Error, Debug, PartialEq, Eq)]
 pub enum CodecError {
@@ -66,10 +68,10 @@ pub enum CodecError {
     SymbolOutOfRange(u16),
 }
 
-const MODE_DEFLATE: u8 = 0;
+const MODE_ZSTD: u8 = 0;
 const MODE_BASE10: u8 = 1;
 
-const DEFLATE_LEVEL: u8 = 10;
+const ZSTD_LEVEL: i32 = 20;
 
 fn trim_trailing_zeros(symbols: &[u8]) -> &[u8] {
     let end = symbols
@@ -88,13 +90,13 @@ pub fn encode(symbols: &[u8]) -> Result<Vec<u8>, CodecError> {
 
     let base10 = encode_base10(symbols);
 
-    let deflate = (symbols.len() <= MAX_DECOMPRESSED).then(|| encode_deflate(symbols));
+    let zstd = (symbols.len() <= MAX_DECOMPRESSED).then(|| encode_zstd(symbols));
 
-    let out = match deflate {
-        Some(deflate) if deflate.len() <= base10.len() => {
-            let mut out = Vec::with_capacity(1 + deflate.len());
-            out.push(MODE_DEFLATE);
-            out.extend_from_slice(&deflate);
+    let out = match zstd {
+        Some(zstd) if zstd.len() <= base10.len() => {
+            let mut out = Vec::with_capacity(1 + zstd.len());
+            out.push(MODE_ZSTD);
+            out.extend_from_slice(&zstd);
             out
         }
         _ => {
@@ -119,7 +121,7 @@ pub fn decode(data: &[u8], known_station_count: usize) -> Result<DecodeResult, C
     let (&mode, body) = data.split_first().ok_or(CodecError::Empty)?;
 
     let symbols = match mode {
-        MODE_DEFLATE => decode_deflate(body)?,
+        MODE_ZSTD => decode_zstd(body)?,
         MODE_BASE10 => decode_base10(body)?,
         other => return Err(CodecError::UnknownMode(other)),
     };
@@ -137,20 +139,43 @@ pub fn decode(data: &[u8], known_station_count: usize) -> Result<DecodeResult, C
     })
 }
 
-fn encode_deflate(symbols: &[u8]) -> Vec<u8> {
-    debug_assert!(symbols.iter().all(|&v| v <= MAX_SYMBOL));
+fn encode_zstd(symbols: &[u8]) -> Vec<u8> {
+    use zstd::zstd_safe::CParameter;
 
-    miniz_oxide::deflate::compress_to_vec(symbols, DEFLATE_LEVEL)
+    debug_assert!(symbols.iter().all(|&v| v <= MAX_SYMBOL));
+    debug_assert!(symbols.len() <= MAX_DECOMPRESSED);
+
+    let mut compressor =
+        zstd::bulk::Compressor::new(ZSTD_LEVEL).expect("zstd level is a valid constant");
+    for parameter in [
+        CParameter::ChecksumFlag(false),
+        CParameter::ContentSizeFlag(false),
+    ] {
+        compressor
+            .set_parameter(parameter)
+            .expect("zstd frame parameters are supported");
+    }
+
+    compressor.compress(symbols).expect("zstd compression")
 }
 
-fn decode_deflate(body: &[u8]) -> Result<Vec<u8>, CodecError> {
-    use miniz_oxide::inflate::TINFLStatus;
+fn decode_zstd(body: &[u8]) -> Result<Vec<u8>, CodecError> {
+    use std::io::Read;
 
-    let symbols = miniz_oxide::inflate::decompress_to_vec_with_limit(body, MAX_DECOMPRESSED)
-        .map_err(|e| match e.status {
-            TINFLStatus::HasMoreOutput => CodecError::TooLong,
-            _ => CodecError::Truncated,
-        })?;
+    let mut decoder = zstd::stream::read::Decoder::new(body).map_err(|_| CodecError::Truncated)?;
+    decoder
+        .window_log_max(MAX_WINDOW_LOG)
+        .expect("window log is within the supported range");
+
+    let mut symbols = Vec::new();
+    decoder
+        .take(MAX_DECOMPRESSED as u64 + 1)
+        .read_to_end(&mut symbols)
+        .map_err(|_| CodecError::Truncated)?;
+
+    if symbols.len() > MAX_DECOMPRESSED {
+        return Err(CodecError::TooLong);
+    }
 
     if let Some(&v) = symbols.iter().find(|&&v| v > MAX_SYMBOL) {
         return Err(CodecError::SymbolOutOfRange(v as u16));
